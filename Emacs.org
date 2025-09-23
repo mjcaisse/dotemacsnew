@@ -797,6 +797,72 @@ Improved C++ syntax highlighting
     :hook (c++-mode . modern-c++-font-lock-mode))
 #+end_src
 
+Add disasteer to provide assembly output
+
+#+begin_src emacs-lisp
+  (use-package disaster
+    :commands (disaster)
+    :init
+    (setq disaster-assembly-mode #'nasm-mode)
+    (map :localleader
+         :map (c++-mode-map c-mode-map fortran-mode-map)
+         :desc "Disaster" "d" #'disasteer))
+#+end_src
+
+
+*** Beardbolt
+
+Beardbolt is a Godbolt Compiler Explorer thingy for emacs. It is a lighter weight version of RMSbolt.
+
+[[https://github.com/joaotavora/beardbolt][Bearbolt GitHub]]
+
+Install:
+
+#+begin_src sh :tangle no
+cd /path/to/beardbolt/clone
+make
+#+end_src
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "/home/mjcaisse/sandbox/beardbolt")
+(require 'beardbolt)
+#+end_src
+
+
+Customize:
+Emacs customization variables _or_ file-local cookies like this:
+
+#+begin_src c++ :tangle no
+int main() {
+}
+
+// Local Variables:
+// beardbolt-command: "g++ --std=c++20 -03"
+// beardbolt-demangle: t
+// beardbolt-disassemble: nil
+// End:
+#+end_src
+
+
+- beardbolt-command: Main compiler command to run. May be something like "gcc -O3". Leave unset to have Beardbolt try to guess from some nearby compilation_commands.json.
+
+- beardbolt-disassemble: Compile, assemble, then disassemble using objdump and present that input instead of assembly code.
+
+- beardbolt-asm-format: Choose between intel and att formats.
+
+- beardbolt-preserve-directives: Keep every non-code, non-label asm directive.
+
+- beardbolt-preserve-unused-labels: Keep unused asm labels.
+
+- beardbolt-preserve-library-functions: Keep functions with no code related to current file.
+
+- beardbolt-demangle: Demangle any mangled symbols of resulting assembly with c++filt.
+
+- beardbolt-execute: If non-nil, run the resulting program in the compilation buffer. If a string, run with these arguments. If t, runs without arguments.
+
+- beardbolt-ccj-extra-flags: A string of extra compilation flags to append to the compilation command devined from compile_commands.json.
+
+- beardbolt-shuffle-rainbow: Use less pretty rainbow colors, but potentially more useful and contrasting ones.
 
 *** Python
 
@@ -839,6 +905,7 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 
 #+end_src
 
+
 *** CMake
 
 #+begin_src emacs-lisp
@@ -854,6 +921,21 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 ;;  (cmake-ide-setup))
 #+end_src
 
+
+*** Format all the buffers
+
+This package provides out-of-the-box formatting hooks for buffer/file types. It relies on a variety of external tools. Form info here: https://github.com/lassik/emacs-format-all-the-code
+
+#+begin_src emacs-lisp
+  (use-package format-all
+    :commands format-all-mode
+    :hook (before-save . format-all-buffer)
+    :config
+    (setq-default format-all-formatters
+                  `(("C"     (clang-format))
+                    ("C++"   (clang-format))
+                    ("Shell"  (shfmt "-i" "4" "-ci")))))
+#+end_src
 
 ** Company Mode
 

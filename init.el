@@ -481,6 +481,17 @@
   :ensure t
   :hook (c++-mode . modern-c++-font-lock-mode))
 
+(use-package disaster
+  :commands (disaster)
+  :init
+  (setq disaster-assembly-mode #'nasm-mode)
+  (map :localleader
+       :map (c++-mode-map c-mode-map fortran-mode-map)
+       :desc "Disaster" "d" #'disasteer))
+
+(add-to-list 'load-path "/home/mjcaisse/sandbox/beardbolt")
+(require 'beardbolt)
+
 (use-package python-mode
   :ensure t
   :hook (python-mode . lsp-deferred)
@@ -506,6 +517,15 @@
 ;;  :ensure t
 ;;  :config
 ;;  (cmake-ide-setup))
+
+(use-package format-all
+  :commands format-all-mode
+  :hook (before-save . format-all-buffer)
+  :config
+  (setq-default format-all-formatters
+                `(("C"     (clang-format))
+                  ("C++"   (clang-format))
+                  ("Shell"  (shfmt "-i" "4" "-ci")))))
 
 (use-package company
   :after lsp-mode
