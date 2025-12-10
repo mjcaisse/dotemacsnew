@@ -598,6 +598,7 @@ To execute or export code in =org-mode= code blocks, you'll need to set up =org-
         'org-babel-load-languages
         '((emacs-lisp . t)
           (C . t)
+          (haskell . t)
           (python . t)))
 
     (push '("conf-unix" . conf-unix) org-src-lang-modes))
@@ -864,6 +865,13 @@ int main() {
 
 - beardbolt-shuffle-rainbow: Use less pretty rainbow colors, but potentially more useful and contrasting ones.
 
+*** Haskell
+
+#+begin_src emacs-lisp
+(use-package haskell-mode
+  :mode "\\.hs\\'")
+#+end_src
+
 *** Python
 
 We use =lsp-mode= and =dap-mode= to provide a more complete development environment for Python in Emacs.  Check out [[https://emacs-lsp.github.io/lsp-mode/page/lsp-pyls/][the =pyls= configuration]] in the =lsp-mode= documentation for more details.
@@ -902,6 +910,25 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
     :after python-mode
     :config
     (pyvenv-mode 1))
+
+#+end_src
+
+
+*** Haskell
+
+#+begin_src emacs-lisp
+
+  (use-package python-mode
+    :ensure t
+    :hook (python-mode . lsp-deferred)
+    :custom
+    ;; NOTE: Set these if Python 3 is called "python3" on your system!
+    ;; (python-shell-interpreter "python3")
+    ;; (dap-python-executable "python3")
+    (dap-python-debugger 'debugpy)
+    :config
+    (require 'dap-python))
+
 
 #+end_src
 
